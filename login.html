@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fakedash – Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:#000;
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.card{
+  background:#111;
+  border:1px solid #222;
+  border-radius:16px;
+  padding:40px 36px;
+  width:100%;
+  max-width:400px;
+}
+.logo{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:24px;font-weight:900;
+  margin-bottom:28px;
+  text-align:center;
+}
+.logo span{color:#00aff0;}
+h1{font-size:22px;font-weight:600;margin-bottom:6px;text-align:center;}
+.sub{font-size:14px;color:#666;text-align:center;margin-bottom:32px;}
+.tabs{
+  display:flex;
+  background:#1a1a1a;
+  border-radius:8px;
+  padding:3px;
+  margin-bottom:24px;
+  gap:3px;
+}
+.tab-btn{
+  flex:1;padding:8px;
+  background:transparent;border:none;
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:500;
+  color:#555;cursor:pointer;
+  border-radius:6px;transition:all 0.15s;
+}
+.tab-btn.active{background:#222;color:#fff;}
+label{display:block;font-size:12px;color:#777;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px;}
+input{
+  width:100%;
+  background:#0d0d0d;
+  border:1px solid #2a2a2a;
+  border-radius:8px;
+  padding:10px 12px;
+  font-size:14px;color:#fff;
+  font-family:'DM Sans',sans-serif;
+  margin-bottom:14px;outline:none;
+  transition:border-color 0.15s;
+}
+input:focus{border-color:#00aff0;}
+.btn{
+  width:100%;
+  background:#00aff0;
+  color:#000;
+  font-weight:700;font-size:15px;
+  padding:12px;border-radius:8px;
+  border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:opacity 0.15s;
+  margin-top:4px;
+}
+.btn:hover{opacity:0.88;}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
+.msg{
+  margin-top:14px;
+  padding:10px 14px;
+  border-radius:8px;
+  font-size:13px;
+  display:none;
+}
+.msg.error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;}
+.msg.success{background:rgba(0,175,240,0.1);border:1px solid rgba(0,175,240,0.3);color:#00aff0;}
+.back{
+  text-align:center;
+  margin-top:20px;
+  font-size:13px;color:#555;
+}
+.back a{color:#00aff0;text-decoration:none;}
+.divider{
+  text-align:center;font-size:12px;color:#444;
+  margin:4px 0 14px;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">fakedash<span>.</span></div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+    <button class="tab-btn" onclick="switchTab('register')">Register</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="form-login">
+    <label>Email</label>
+    <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+    <label>Password</label>
+    <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+    <button class="btn" onclick="doLogin()" id="login-btn">Sign In</button>
+    <div class="msg" id="login-msg"></div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="form-register" style="display:none">
+    <label>Email</label>
+    <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
+    <label>Password</label>
+    <input type="password" id="reg-password" placeholder="min. 8 characters" autocomplete="new-password">
+    <button class="btn" onclick="doRegister()" id="reg-btn">Create Account</button>
+    <div class="msg" id="reg-msg"></div>
+    <div class="divider" style="margin-top:14px;">After registering, purchase a subscription to access the dashboard.</div>
+  </div>
+
+  <div class="back"><a href="/">← Back to home</a></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://olbvoczxkrmmorqproby.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_fdCEaSs0I8E5K66A8GUsBQ_V_HPef_D';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// If already logged in with active sub → redirect straight to dashboard
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    const { data } = await sb.from('subscribers')
+      .select('active').eq('user_id', session.user.id).single();
+    if (data?.active) window.location.href = '/dashboard.html';
+  }
+})();
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0) === (tab==='login')));
+  document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+function showMsg(id, type, text) {
+  const el = document.getElementById(id);
+  el.className = 'msg ' + type;
+  el.textContent = text;
+  el.style.display = 'block';
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  if (!email || !pass) return showMsg('login-msg','error','Please fill in all fields.');
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) {
+    showMsg('login-msg','error', error.message);
+    btn.disabled = false; btn.textContent = 'Sign In';
+    return;
+  }
+
+  // Check subscription
+  const { data: sub } = await sb.from('subscribers')
+    .select('active').eq('user_id', data.user.id).single();
+
+  if (sub?.active) {
+    window.location.href = '/dashboard.html';
+  } else {
+    showMsg('login-msg','error','No active subscription. Please purchase a plan.');
+    btn.disabled = false; btn.textContent = 'Sign In';
+    // Show link to pricing
+    document.getElementById('login-msg').innerHTML +=
+      ' <a href="/#pricing" style="color:#00aff0">View plans →</a>';
+  }
+}
+
+async function doRegister() {
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-password').value;
+  if (!email || !pass) return showMsg('reg-msg','error','Please fill in all fields.');
+  if (pass.length < 8) return showMsg('reg-msg','error','Password must be at least 8 characters.');
+  const btn = document.getElementById('reg-btn');
+  btn.disabled = true; btn.textContent = 'Creating account...';
+
+  const { error } = await sb.auth.signUp({ email, password: pass });
+  if (error) {
+    showMsg('reg-msg','error', error.message);
+    btn.disabled = false; btn.textContent = 'Create Account';
+    return;
+  }
+  showMsg('reg-msg','success','Account created! Check your email to confirm, then purchase a plan.');
+  btn.disabled = false; btn.textContent = 'Create Account';
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const loginVisible = document.getElementById('form-login').style.display !== 'none';
+    if (loginVisible) doLogin(); else doRegister();
+  }
+});
+</script>
+</body>
+</html>

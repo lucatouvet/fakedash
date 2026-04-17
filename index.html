@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fakedash – Fake It Until You Make It</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --green:#00aff0;
+  --black:#0a0a0a;
+  --card:#111111;
+  --card2:#161616;
+  --border:#222;
+  --text:#fff;
+  --muted:#888;
+}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--black);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  height:56px;
+  background:rgba(10,10,10,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid #1a1a1a;
+  display:flex;align-items:center;
+  padding:0 40px;
+  z-index:100;
+  gap:32px;
+}
+.nav-logo{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;font-weight:900;
+  color:var(--text);
+  letter-spacing:-0.5px;
+  display:flex;align-items:center;gap:6px;
+}
+.nav-logo span{color:var(--green);}
+.nav-dot{width:8px;height:8px;background:var(--green);border-radius:50%;}
+.nav-links{
+  display:flex;align-items:center;gap:24px;
+  margin-left:auto;
+}
+.nav-links a{
+  font-size:13px;color:#aaa;text-decoration:none;
+  transition:color 0.15s;
+}
+.nav-links a:hover{color:#fff;}
+.nav-cta{
+  background:var(--green);
+  color:#000;
+  font-size:13px;font-weight:600;
+  padding:8px 18px;
+  border-radius:6px;
+  text-decoration:none;
+  transition:opacity 0.15s;
+  font-family:'DM Sans',sans-serif;
+}
+.nav-cta:hover{opacity:0.88;}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:120px 40px 80px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 50% 40%, rgba(0,175,240,0.07) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#1a1a1a;
+  border:1px solid #2a2a2a;
+  border-radius:100px;
+  padding:6px 14px;
+  font-size:12px;color:#aaa;
+  margin-bottom:28px;
+  letter-spacing:0.3px;
+}
+.hero-tag-dot{width:6px;height:6px;background:var(--green);border-radius:50%;}
+.hero h1{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(64px,10vw,120px);
+  font-weight:900;
+  line-height:0.92;
+  letter-spacing:-2px;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.hero h1 .green{color:var(--green);}
+.hero h1 .outline{
+  -webkit-text-stroke:2px #fff;
+  color:transparent;
+}
+.hero-sub{
+  font-size:clamp(15px,2vw,18px);
+  color:#888;
+  max-width:560px;
+  margin:24px auto 40px;
+  line-height:1.6;
+}
+.hero-sub strong{color:#ccc;}
+.hero-btns{
+  display:flex;align-items:center;gap:12px;
+  flex-wrap:wrap;justify-content:center;
+  margin-bottom:64px;
+}
+.btn-primary{
+  background:var(--green);
+  color:#000;
+  font-weight:700;
+  font-size:15px;
+  padding:14px 28px;
+  border-radius:8px;
+  text-decoration:none;
+  font-family:'DM Sans',sans-serif;
+  transition:transform 0.15s,opacity 0.15s;
+}
+.btn-primary:hover{transform:translateY(-1px);opacity:0.9;}
+.btn-secondary{
+  background:transparent;
+  color:#fff;
+  font-size:14px;
+  padding:14px 24px;
+  border-radius:8px;
+  border:1px solid #333;
+  text-decoration:none;
+  font-family:'DM Sans',sans-serif;
+  transition:border-color 0.15s;
+}
+.btn-secondary:hover{border-color:#555;}
+.trust-row{
+  display:flex;align-items:center;gap:20px;
+  font-size:12px;color:#666;
+  flex-wrap:wrap;justify-content:center;
+}
+.trust-item{display:flex;align-items:center;gap:6px;}
+.trust-item svg{width:14px;height:14px;color:var(--green);}
+
+/* DASHBOARD PREVIEW */
+.preview-wrap{
+  margin-top:60px;
+  position:relative;
+  max-width:900px;
+  width:100%;
+}
+.preview-glow{
+  position:absolute;
+  top:-40px;left:50%;transform:translateX(-50%);
+  width:600px;height:200px;
+  background:radial-gradient(ellipse, rgba(0,175,240,0.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+.preview-frame{
+  background:#111;
+  border:1px solid #2a2a2a;
+  border-radius:14px;
+  overflow:hidden;
+  position:relative;
+}
+.preview-topbar{
+  height:32px;
+  background:#0d0d0d;
+  border-bottom:1px solid #1e1e1e;
+  display:flex;align-items:center;
+  padding:0 14px;gap:6px;
+}
+.preview-dot{width:10px;height:10px;border-radius:50%;}
+.preview-dot.r{background:#ff5f57;}
+.preview-dot.y{background:#febc2e;}
+.preview-dot.g{background:#28c840;}
+.preview-content{
+  background:#111;
+  padding:16px;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+}
+.preview-card{
+  background:#1a1a1a;
+  border:1px solid #252525;
+  border-radius:8px;
+  padding:14px 16px;
+}
+.preview-card-label{font-size:10px;color:#555;margin-bottom:6px;}
+.preview-card-val{font-size:22px;font-weight:700;color:var(--green);}
+.preview-card-sub{font-size:10px;color:#444;margin-top:3px;}
+.preview-card.wide{grid-column:span 2;}
+.preview-chart{
+  height:48px;
+  display:flex;align-items:flex-end;gap:3px;
+  margin-top:10px;
+}
+.preview-bar{
+  flex:1;background:#3e78f7;border-radius:2px;opacity:0.7;
+}
+
+/* SECTION SHARED */
+section{padding:100px 40px;}
+.section-tag{
+  display:inline-block;
+  background:var(--green);
+  color:#000;
+  font-size:11px;font-weight:700;
+  padding:4px 10px;
+  border-radius:4px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:16px;
+}
+.section-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(42px,6vw,72px);
+  font-weight:900;
+  text-transform:uppercase;
+  line-height:0.95;
+  letter-spacing:-1px;
+}
+.section-title .green{color:var(--green);}
+.section-sub{
+  font-size:16px;color:#777;
+  max-width:480px;line-height:1.6;
+  margin-top:16px;
+}
+
+/* HOW IT WORKS */
+.how-it-works{
+  background:#0d0d0d;
+  border-top:1px solid #1a1a1a;
+  border-bottom:1px solid #1a1a1a;
+}
+.how-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2px;
+  margin-top:56px;
+  border:1px solid #1e1e1e;
+  border-radius:12px;
+  overflow:hidden;
+}
+.how-card{
+  background:#111;
+  padding:36px 32px;
+  border-right:1px solid #1e1e1e;
+  position:relative;
+}
+.how-card:last-child{border-right:none;}
+.how-num{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:72px;font-weight:900;
+  color:#1e1e1e;
+  line-height:1;
+  margin-bottom:16px;
+}
+.how-icon{
+  width:44px;height:44px;
+  background:#1a1a1a;
+  border:1px solid #252525;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:16px;
+}
+.how-icon svg{width:20px;height:20px;color:var(--green);}
+.how-card h3{
+  font-size:18px;font-weight:600;
+  margin-bottom:10px;
+}
+.how-card p{font-size:14px;color:#666;line-height:1.6;}
+
+/* WHAT YOU CAN EDIT */
+.edit-section{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+}
+.edit-list{
+  list-style:none;
+  margin-top:28px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.edit-list li{
+  display:flex;align-items:center;gap:10px;
+  font-size:15px;color:#aaa;
+}
+.edit-list li::before{
+  content:'';
+  width:8px;height:8px;
+  background:var(--green);
+  border-radius:50%;
+  flex-shrink:0;
+}
+.mockup-box{
+  background:#111;
+  border:1px solid #222;
+  border-radius:14px;
+  padding:20px;
+  position:relative;
+}
+.mockup-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid #1a1a1a;
+}
+.mockup-row:last-child{border-bottom:none;}
+.mockup-label{font-size:13px;color:#555;}
+.mockup-val{
+  font-size:15px;font-weight:600;color:var(--green);
+}
+.mockup-input{
+  background:#1a1a1a;
+  border:1px solid #2e2e2e;
+  border-radius:6px;
+  padding:5px 10px;
+  font-size:13px;color:#fff;
+  font-family:'DM Sans',sans-serif;
+  width:110px;
+}
+.edit-badge{
+  position:absolute;
+  top:-12px;right:20px;
+  background:var(--green);
+  color:#000;
+  font-size:11px;font-weight:700;
+  padding:4px 10px;
+  border-radius:100px;
+}
+
+/* PRICING */
+.pricing-section{
+  background:#0d0d0d;
+  border-top:1px solid #1a1a1a;
+  border-bottom:1px solid #1a1a1a;
+  text-align:center;
+}
+.pricing-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+  max-width:800px;
+  margin:56px auto 0;
+}
+.pricing-card{
+  background:#111;
+  border:1px solid #222;
+  border-radius:14px;
+  padding:36px 32px;
+  text-align:left;
+  position:relative;
+  transition:border-color 0.2s;
+}
+.pricing-card:hover{border-color:#333;}
+.pricing-card.featured{
+  border-color:var(--green);
+  background:#111;
+}
+.pricing-badge{
+  position:absolute;
+  top:-12px;left:50%;transform:translateX(-50%);
+  background:var(--green);
+  color:#000;
+  font-size:11px;font-weight:700;
+  padding:4px 14px;
+  border-radius:100px;
+  white-space:nowrap;
+}
+.pricing-name{
+  font-size:13px;font-weight:600;color:#888;
+  text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:12px;
+}
+.pricing-price{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:64px;font-weight:900;
+  line-height:1;
+  margin-bottom:4px;
+}
+.pricing-price sup{font-size:24px;vertical-align:top;margin-top:12px;display:inline-block;}
+.pricing-price .period{font-size:18px;color:#555;font-weight:400;}
+.pricing-desc{font-size:14px;color:#666;margin-bottom:28px;margin-top:8px;}
+.pricing-features{
+  list-style:none;
+  display:flex;flex-direction:column;gap:10px;
+  margin-bottom:32px;
+}
+.pricing-features li{
+  display:flex;align-items:center;gap:10px;
+  font-size:14px;color:#aaa;
+}
+.pricing-features li svg{width:16px;height:16px;color:var(--green);flex-shrink:0;}
+.pricing-btn{
+  display:block;width:100%;
+  padding:13px;
+  border-radius:8px;
+  text-align:center;
+  font-weight:700;font-size:15px;
+  text-decoration:none;
+  font-family:'DM Sans',sans-serif;
+  transition:opacity 0.15s,transform 0.15s;
+  cursor:pointer;border:none;
+}
+.pricing-btn:hover{opacity:0.88;transform:translateY(-1px);}
+.pricing-btn.primary{background:var(--green);color:#fff;}
+.pricing-btn.secondary{background:#1a1a1a;color:#fff;border:1px solid #2e2e2e;}
+.compare-note{
+  font-size:13px;color:#555;
+  margin-top:24px;
+  text-align:center;
+}
+.compare-note span{color:var(--green);}
+
+/* FOR WHO */
+.for-who{
+  text-align:center;
+}
+.for-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  margin-top:56px;
+}
+.for-card{
+  background:#111;
+  border:1px solid #1e1e1e;
+  border-radius:12px;
+  padding:32px 28px;
+  text-align:left;
+}
+.for-tag{
+  display:inline-block;
+  background:#1a1a1a;
+  border:1px solid #252525;
+  border-radius:6px;
+  padding:4px 10px;
+  font-size:11px;color:#888;
+  text-transform:uppercase;letter-spacing:0.5px;
+  margin-bottom:16px;
+}
+.for-card h3{font-size:17px;font-weight:600;margin-bottom:10px;}
+.for-card p{font-size:14px;color:#666;line-height:1.6;}
+
+/* FAQ */
+.faq-section{
+  background:#0d0d0d;
+  border-top:1px solid #1a1a1a;
+}
+.faq-list{
+  max-width:700px;
+  margin:48px auto 0;
+}
+.faq-item{
+  border-bottom:1px solid #1a1a1a;
+}
+.faq-q{
+  width:100%;background:none;border:none;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 0;
+  font-size:15px;font-weight:500;color:#fff;
+  cursor:pointer;text-align:left;
+  font-family:'DM Sans',sans-serif;
+  gap:16px;
+}
+.faq-q:hover{color:var(--green);}
+.faq-q .icon{
+  width:24px;height:24px;
+  background:#1a1a1a;
+  border:1px solid #252525;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:transform 0.2s;
+}
+.faq-q .icon svg{width:12px;height:12px;color:#888;}
+.faq-q.open .icon{transform:rotate(45deg);}
+.faq-a{
+  display:none;
+  font-size:14px;color:#666;line-height:1.7;
+  padding-bottom:20px;
+}
+.faq-a.open{display:block;}
+
+/* CTA BOTTOM */
+.cta-bottom{
+  text-align:center;
+  background:var(--green);
+  padding:100px 40px;
+}
+.cta-bottom h2{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(52px,8vw,96px);
+  font-weight:900;
+  text-transform:uppercase;
+  color:#000;
+  line-height:0.92;
+  letter-spacing:-2px;
+  margin-bottom:28px;
+}
+.cta-bottom p{
+  font-size:17px;color:rgba(0,0,0,0.65);
+  max-width:420px;margin:0 auto 36px;line-height:1.5;
+}
+.cta-bottom .btn-black{
+  display:inline-block;
+  background:#000;color:var(--green);
+  font-weight:700;font-size:16px;
+  padding:16px 36px;
+  border-radius:8px;
+  text-decoration:none;
+  font-family:'DM Sans',sans-serif;
+  transition:opacity 0.15s,transform 0.15s;
+}
+.cta-bottom .btn-black:hover{opacity:0.88;transform:translateY(-2px);}
+
+/* FOOTER */
+footer{
+  background:#000;
+  border-top:1px solid #1a1a1a;
+  padding:40px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:16px;
+}
+.footer-logo{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:20px;font-weight:900;
+  display:flex;align-items:center;gap:6px;
+}
+.footer-logo span{color:var(--green);}
+.footer-links{
+  display:flex;gap:20px;
+}
+.footer-links a{font-size:13px;color:#555;text-decoration:none;}
+.footer-links a:hover{color:#aaa;}
+footer p{font-size:12px;color:#333;}
+
+/* TICKER */
+.ticker{
+  background:var(--green);
+  padding:12px 0;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.ticker-inner{
+  display:inline-flex;
+  animation:ticker 20s linear infinite;
+}
+.ticker-item{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;font-weight:900;
+  text-transform:uppercase;
+  color:#000;
+  padding:0 32px;
+  letter-spacing:1px;
+}
+.ticker-sep{color:rgba(0,0,0,0.3);}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.hero-tag{animation:fadeUp 0.5s ease both;}
+.hero h1{animation:fadeUp 0.5s 0.1s ease both;}
+.hero-sub{animation:fadeUp 0.5s 0.2s ease both;}
+.hero-btns{animation:fadeUp 0.5s 0.3s ease both;}
+.trust-row{animation:fadeUp 0.5s 0.4s ease both;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  section{padding:70px 20px;}
+  .how-grid,.for-grid{grid-template-columns:1fr;}
+  .edit-section{grid-template-columns:1fr;gap:40px;}
+  .pricing-grid{grid-template-columns:1fr;}
+  footer{flex-direction:column;text-align:center;}
+  .preview-content{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">fakedash<span>.</span></div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="/login.html" class="nav-cta">Open Dashboard →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-tag">
+    <div class="hero-tag-dot"></div>
+    The #1 closing tool for OFM agencies
+  </div>
+  <h1>
+    FAKE IT<br>
+    UNTIL YOU<br>
+    <span class="green">MAKE IT.</span>
+  </h1>
+  <p class="hero-sub">
+    Show leads a <strong>professional, live-looking dashboard</strong> — before your real numbers catch up. Close more clients. Build instant trust.
+  </p>
+  <div class="hero-btns">
+    <a href="/login.html" class="btn-primary">Get Access Now →</a>
+    <a href="#how" class="btn-secondary">See How It Works</a>
+  </div>
+  <div class="trust-row">
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      No credit card required
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Cancel anytime
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      1:1 Infloww replica
+    </div>
+  </div>
+
+  <!-- MINI DASHBOARD PREVIEW -->
+  <div class="preview-wrap">
+    <div class="preview-glow"></div>
+    <div class="preview-frame">
+      <div class="preview-topbar">
+        <div class="preview-dot r"></div>
+        <div class="preview-dot y"></div>
+        <div class="preview-dot g"></div>
+      </div>
+      <div class="preview-content">
+        <div class="preview-card wide">
+          <div class="preview-card-label">Total earnings · This week</div>
+          <div class="preview-card-val">$12,480.00</div>
+          <div class="preview-chart">
+            <div class="preview-bar" style="height:30%"></div>
+            <div class="preview-bar" style="height:55%"></div>
+            <div class="preview-bar" style="height:40%"></div>
+            <div class="preview-bar" style="height:80%"></div>
+            <div class="preview-bar" style="height:65%"></div>
+            <div class="preview-bar" style="height:90%"></div>
+            <div class="preview-bar" style="height:100%;opacity:1"></div>
+          </div>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-label">Subscriptions</div>
+          <div class="preview-card-val" style="font-size:18px;color:#3e78f7;">$1,248.00</div>
+          <div class="preview-card-sub">10% of total</div>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-label">Messages</div>
+          <div class="preview-card-val" style="font-size:18px;color:#a855f7;">$6,864.00</div>
+          <div class="preview-card-sub">55% of total</div>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-label">Tips</div>
+          <div class="preview-card-val" style="font-size:18px;color:#f97316;">$3,744.00</div>
+          <div class="preview-card-sub">30% of total</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">Close More Clients <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Build Instant Trust <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">1:1 Infloww Replica <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Editable Numbers <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">For OFM Agencies <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Close More Clients <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Build Instant Trust <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">1:1 Infloww Replica <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">Editable Numbers <span class="ticker-sep">✦</span></span>
+    <span class="ticker-item">For OFM Agencies <span class="ticker-sep">✦</span></span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works" id="how">
+  <div style="text-align:center;">
+    <div class="section-tag">How it works</div>
+    <h2 class="section-title">3 STEPS.<br><span class="green">THAT'S IT.</span></h2>
+  </div>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">01</div>
+      <div class="how-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <h3>Get Access</h3>
+      <p>Subscribe and get instant access to your personal dashboard — ready to use in 60 seconds.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">02</div>
+      <div class="how-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <h3>Enter Your Numbers</h3>
+      <p>Input the earnings you want to show. Date by date. The dashboard calculates everything automatically.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">03</div>
+      <div class="how-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <h3>Show Your Lead</h3>
+      <p>Screen share or show your device. They see a live, professional Infloww dashboard — and they're sold.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU CAN EDIT -->
+<section style="max-width:1100px;margin:0 auto;">
+  <div class="edit-section">
+    <div>
+      <div class="section-tag">Full control</div>
+      <h2 class="section-title">WHAT CAN YOU<br><span class="green">VISUALLY EDIT?</span></h2>
+      <ul class="edit-list">
+        <li>Total earnings (any amount, any date)</li>
+        <li>Subscriptions, Tips, Posts, Messages</li>
+        <li>Employee sales chart (7-day view)</li>
+        <li>Profile picture & initials</li>
+        <li>Net earnings vs Gross earnings toggle</li>
+        <li>Yesterday / Today / This week / This month</li>
+      </ul>
+    </div>
+    <div class="mockup-box">
+      <div class="edit-badge">✦ EDITABLE</div>
+      <div class="mockup-row">
+        <span class="mockup-label">Apr 17</span>
+        <input class="mockup-input" type="number" value="3000" placeholder="$0.00">
+      </div>
+      <div class="mockup-row">
+        <span class="mockup-label">Apr 15</span>
+        <input class="mockup-input" type="number" value="1500" placeholder="$0.00">
+      </div>
+      <div class="mockup-row">
+        <span class="mockup-label">Apr 12</span>
+        <input class="mockup-input" type="number" value="4200" placeholder="$0.00">
+      </div>
+      <div class="mockup-row" style="border-bottom:none;padding-top:16px;">
+        <span style="font-size:13px;color:#555;">Total (This week)</span>
+        <span style="font-size:16px;font-weight:700;color:#00aff0;">$8,700.00</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-tag">Pricing</div>
+  <h2 class="section-title">SIMPLE.<br><span class="green">AFFORDABLE.</span></h2>
+  <p class="section-sub" style="margin:16px auto 0;">No hidden fees. No complicated tiers. Just access.</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-name">Monthly</div>
+      <div class="pricing-price"><sup>$</sup>50<span class="period">/mo</span></div>
+      <div class="pricing-desc">Full access, cancel anytime.</div>
+      <ul class="pricing-features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>1:1 Infloww Dashboard</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Editable earnings & dates</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Net & Gross toggle</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Profile customization</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Mobile & Desktop</li>
+      </ul>
+      <button onclick="startCheckout('monthly')" class="pricing-btn secondary">Get Started →</button>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="pricing-badge">MOST POPULAR</div>
+      <div class="pricing-name">3 Months</div>
+      <div class="pricing-price"><sup>$</sup>120<span class="period">/3mo</span></div>
+      <div class="pricing-desc">Save $30 — best value for active closers.</div>
+      <ul class="pricing-features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Everything in Monthly</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Priority support</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Early access to updates</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>$40/mo effective</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>vs. $150/mo competitors</li>
+      </ul>
+      <button onclick="startCheckout('quarterly')" class="pricing-btn primary">Get Started →</button>
+    </div>
+  </div>
+
+  <p class="compare-note">competitors charge <span>$150/month</span> for the same thing. we charge $50.</p>
+</section>
+
+<!-- FOR WHO -->
+<section class="for-who">
+  <div class="section-tag">Who is this for?</div>
+  <h2 class="section-title">IF YOU NEED TO<br><span class="green">CLOSE DEALS —</span><br>THIS IS FOR YOU.</h2>
+  <div class="for-grid">
+    <div class="for-card">
+      <div class="for-tag">OFM Agencies</div>
+      <h3>OnlyFans Managers</h3>
+      <p>Show new creators the kind of results you're driving — even before your agency is fully scaled. Build trust fast.</p>
+    </div>
+    <div class="for-card">
+      <div class="for-tag">Founders</div>
+      <h3>Agency Builders</h3>
+      <p>You're building something real. But leads don't wait. Use this to close your first clients while you grow your actual numbers.</p>
+    </div>
+    <div class="for-card">
+      <div class="for-tag">Sales Teams</div>
+      <h3>Closers & SDRs</h3>
+      <p>High-ticket closing requires proof. Show it visually during calls. No screenshots, no PDFs — a live dashboard.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div style="text-align:center;">
+    <div class="section-tag">Common Questions</div>
+    <h2 class="section-title">GOT <span class="green">QUESTIONS?</span></h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What exactly is fakedash?
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      </button>
+      <div class="faq-a">Fakedash is a fully editable replica of the Infloww CRM dashboard. You input the numbers you want to show, and it displays them exactly like the real platform — so you can demonstrate results to potential clients.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is this connected to real Infloww data?
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      </button>
+      <div class="faq-a">No. Fakedash is a standalone tool. You enter the numbers manually. It's designed purely as a visual presentation tool for sales calls and lead conversations.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What platforms does it work on?
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      </button>
+      <div class="faq-a">Fakedash runs entirely in your browser — works on Mac, Windows, iOS and Android. No app install needed. Just open and show.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Do I need a subscription?
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      </button>
+      <div class="faq-a">Yes, fakedash is a monthly subscription starting at $50/month — which is 3x cheaper than the competition. Cancel any time with no questions asked.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Why is it cheaper than competitors?
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+      </button>
+      <div class="faq-a">Because we built this for agencies who are just getting started. $150/month is too expensive when you're still in growth mode. We price it to be accessible from day one.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BOTTOM -->
+<section class="cta-bottom">
+  <h2>STOP EXPLAINING.<br>START SHOWING.</h2>
+  <p>Get immediate access to the visual dashboard that closes deals — starting today.</p>
+  <a href="/login.html" class="btn-black">Get Access Now →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">fakedash<span>.</span></div>
+  <div class="footer-links">
+    <a href="#how">How it works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <p>© 2025 fakedash. All rights reserved.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+function toggleFaq(btn){
+  const a = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  document.querySelectorAll('.faq-q').forEach(q=>q.classList.remove('open'));
+  document.querySelectorAll('.faq-a').forEach(a=>a.classList.remove('open'));
+  if(!isOpen){btn.classList.add('open');a.classList.add('open');}
+}
+
+// Checkout: redirects to login first if not logged in
+const SUPABASE_URL = 'https://olbvoczxkrmmorqproby.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_fdCEaSs0I8E5K66A8GUsBQ_V_HPef_D';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Price IDs – replace with your actual Stripe Price IDs after creating products
+const PRICES = {
+  monthly:   'price_1TNFziRMcrukdElnud78qAk3',
+  quarterly: 'price_1TNG2ZRMcrukdElnYUL8YWJc',
+};
+
+async function startCheckout(plan) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    // Not logged in → go to login, then come back to checkout
+    sessionStorage.setItem('pending_plan', plan);
+    window.location.href = '/login.html';
+    return;
+  }
+
+  const priceId = PRICES[plan];
+  const res = await fetch('/.netlify/functions/create-checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId: session.user.id,
+      email: session.user.email,
+      priceId,
+    }),
+  });
+
+  const { url, error } = await res.json();
+  if (error) { alert('Error: ' + error); return; }
+  window.location.href = url;
+}
+
+// If user just logged in and had a pending plan, resume checkout
+(async () => {
+  const pending = sessionStorage.getItem('pending_plan');
+  if (pending) {
+    sessionStorage.removeItem('pending_plan');
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) await startCheckout(pending);
+  }
+})();
+</script>
+</body>
+</html>
