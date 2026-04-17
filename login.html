@@ -203,7 +203,8 @@ async function doRegister() {
     btn.disabled = false; btn.textContent = 'Create Account';
     return;
   }
-  showMsg('reg-msg','success','Account created! Check your email to confirm, then purchase a plan.');
+  showMsg('reg-msg','success','Account created! Now click Get Started on a plan to access the dashboard.');
+setTimeout(() => { window.location.href = '/'; }, 2000);
   btn.disabled = false; btn.textContent = 'Create Account';
 }
 
