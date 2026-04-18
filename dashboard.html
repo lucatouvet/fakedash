@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fakedash – Dashboard</title>
+<title>Infloww – Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -965,21 +965,22 @@ canvas#salesChart {
 <div class="modal-overlay" id="profileModal">
   <div class="modal">
     <h3>Edit Profile</h3>
-    <div class="profile-preview-wrap">
-      <div class="profile-preview-circle" id="profilePreview">
-        <span id="profilePreviewInitials">LC</span>
+    <!-- Avatar preview -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:18px;">
+      <div id="profilePreview" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#3e78f7,#a855f7);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;border:2px solid #333;flex-shrink:0;" onclick="document.getElementById('avatarFileInput').click()" title="Click to upload photo">
+        <span id="profilePreviewInitials" style="color:white;font-size:20px;font-weight:700;font-family:Inter,sans-serif;">LC</span>
       </div>
+      <div style="font-size:11px;color:#555;">Click photo to change</div>
+      <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(this)">
+      <button onclick="document.getElementById('avatarFileInput').click()" class="btn btn-secondary" style="font-size:12px;padding:5px 14px;">
+        Upload Photo
+      </button>
+      <button onclick="removeAvatar()" id="removeAvatarBtn" class="btn btn-secondary" style="font-size:12px;padding:5px 14px;display:none;color:#e05c5c;">
+        Remove Photo
+      </button>
     </div>
-    <label>Initials</label>
+    <label>Initials (shown if no photo)</label>
     <input type="text" id="profileInitials" value="LC" maxlength="3" oninput="updateProfilePreview()">
-    <label>Color</label>
-    <div class="avatar-options">
-      <div class="avatar-opt selected" style="background:linear-gradient(135deg,#3e78f7,#a855f7)" data-color="linear-gradient(135deg,#3e78f7,#a855f7)" onclick="selectColor(this)"></div>
-      <div class="avatar-opt" style="background:linear-gradient(135deg,#f97316,#ef4444)" data-color="linear-gradient(135deg,#f97316,#ef4444)" onclick="selectColor(this)"></div>
-      <div class="avatar-opt" style="background:linear-gradient(135deg,#22c55e,#06b6d4)" data-color="linear-gradient(135deg,#22c55e,#06b6d4)" onclick="selectColor(this)"></div>
-      <div class="avatar-opt" style="background:linear-gradient(135deg,#ec4899,#f97316)" data-color="linear-gradient(135deg,#ec4899,#f97316)" onclick="selectColor(this)"></div>
-      <div class="avatar-opt" style="background:linear-gradient(135deg,#a855f7,#ec4899)" data-color="linear-gradient(135deg,#a855f7,#ec4899)" onclick="selectColor(this)"></div>
-    </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('profileModal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveProfile()">Save</button>
@@ -1009,7 +1010,7 @@ const state = {
   tab: 'week',
   earningsType: 'net',
   records: [],
-  profile: { initials: 'LC', color: 'linear-gradient(135deg,#3e78f7,#a855f7)' }
+  profile: { initials: 'LC', color: 'linear-gradient(135deg,#3e78f7,#a855f7)', avatarUrl: null }
 };
 let chart = null;
 
@@ -1170,37 +1171,97 @@ function renderChart() {
   });
 }
 
+// FULLSCREEN on load
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.documentElement;
+  if (el.requestFullscreen) el.requestFullscreen();
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+});
+
 // PROFILE
+let avatarDataUrl = null; // stores uploaded image as base64
+
+function handleAvatarUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    avatarDataUrl = e.target.result;
+    const preview = document.getElementById('profilePreview');
+    preview.innerHTML = `<img src="${avatarDataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+    document.getElementById('removeAvatarBtn').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeAvatar() {
+  avatarDataUrl = null;
+  const initials = document.getElementById('profileInitials').value.toUpperCase().slice(0,3) || 'LC';
+  const preview = document.getElementById('profilePreview');
+  preview.style.background = state.profile.color;
+  preview.innerHTML = `<span id="profilePreviewInitials" style="color:white;font-size:20px;font-weight:700;font-family:Inter,sans-serif;">${initials}</span>`;
+  document.getElementById('removeAvatarBtn').style.display = 'none';
+  document.getElementById('avatarFileInput').value = '';
+}
+
 function openProfileModal() {
-  document.getElementById('profileInitials').value = state.profile.initials;
-  document.getElementById('profilePreviewInitials').textContent = state.profile.initials;
-  document.getElementById('profilePreview').style.background = state.profile.color;
+  const initials = state.profile.initials;
+  document.getElementById('profileInitials').value = initials;
+  const preview = document.getElementById('profilePreview');
+  if (state.profile.avatarUrl) {
+    preview.innerHTML = `<img src="${state.profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+    document.getElementById('removeAvatarBtn').style.display = 'block';
+    avatarDataUrl = state.profile.avatarUrl;
+  } else {
+    preview.style.background = state.profile.color;
+    preview.innerHTML = `<span id="profilePreviewInitials" style="color:white;font-size:20px;font-weight:700;font-family:Inter,sans-serif;">${initials}</span>`;
+    document.getElementById('removeAvatarBtn').style.display = 'none';
+    avatarDataUrl = null;
+  }
   document.getElementById('profileModal').classList.add('open');
 }
+
 function updateProfilePreview() {
-  const v = document.getElementById('profileInitials').value.toUpperCase().slice(0,3);
-  document.getElementById('profilePreviewInitials').textContent = v || '?';
+  const v = document.getElementById('profileInitials').value.toUpperCase().slice(0,3) || '?';
+  if (!avatarDataUrl) {
+    const el = document.getElementById('profilePreviewInitials');
+    if (el) el.textContent = v;
+  }
 }
-function selectColor(el) {
-  document.querySelectorAll('.avatar-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('profilePreview').style.background = el.dataset.color;
-}
+
 function saveProfile() {
   const initials = document.getElementById('profileInitials').value.toUpperCase().slice(0,3) || 'ME';
-  const sel = document.querySelector('.avatar-opt.selected');
-  const color = sel ? sel.dataset.color : state.profile.color;
-  state.profile = { initials, color };
+  state.profile.initials = initials;
+  if (avatarDataUrl) {
+    state.profile.avatarUrl = avatarDataUrl;
+  } else {
+    state.profile.avatarUrl = null;
+  }
   applyProfile();
   closeModal('profileModal');
 }
+
 function applyProfile() {
+  // Topbar profile button
   const pd = document.getElementById('profileDisplay');
-  pd.textContent = state.profile.initials;
-  pd.style.background = state.profile.color;
+  if (state.profile.avatarUrl) {
+    pd.innerHTML = `<img src="${state.profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    pd.style.background = 'none';
+  } else {
+    pd.textContent = state.profile.initials;
+    pd.style.background = state.profile.color;
+  }
+  // Creator avatar in earnings card
   const av = document.getElementById('creatorAvatarInner');
-  av.innerHTML = `<span style="color:white;font-size:13px;font-weight:700;font-family:Inter,sans-serif">${state.profile.initials}</span>`;
-  document.getElementById('creatorAvatar').style.background = state.profile.color;
+  const avWrap = document.getElementById('creatorAvatar');
+  if (state.profile.avatarUrl) {
+    avWrap.style.background = 'none';
+    av.innerHTML = `<img src="${state.profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else {
+    avWrap.style.background = state.profile.color;
+    av.innerHTML = `<span style="color:white;font-size:13px;font-weight:700;font-family:Inter,sans-serif">${state.profile.initials}</span>`;
+  }
 }
 
 // DATA
@@ -1247,7 +1308,7 @@ document.getElementById('dataModal').addEventListener('click', e => { if(e.targe
 // LOGOUT
 async function doLogout() {
   if (window._sb) await window._sb.auth.signOut();
-  window.location.replace('/login.html');
+  window.location.replace('login.html');
 }
 
 // INIT
