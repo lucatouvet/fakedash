@@ -318,7 +318,6 @@ body {
 .creator-avatar {
   width: 50px; height: 50px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3e78f7, #1a5cd4);
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 12px;
   overflow: hidden;
@@ -600,7 +599,7 @@ canvas#salesChart {
 <!-- SIDEBAR -->
 <nav class="sidebar">
   <div style="position:relative;width:40px;height:40px;margin-bottom:18px;margin-top:4px;flex-shrink:0;">
-    <img src="assets/icons/logo2.png" width="30" height="30" style="display:block;">
+    <img src="assets/icons/logo2.png" width="100%" height="100%" style="display:block;">
   </div>
 
   <div class="sidebar-nav">
@@ -723,7 +722,7 @@ canvas#salesChart {
       <div class="total-block">
         <div class="creator-avatar" id="creatorAvatar">
           <div class="creator-avatar-inner" id="creatorAvatarInner" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-         <img src="assets/icons/logo.png" width="30" height="30" style="display:block;">
+         <img src="assets/icons/logo.png" width="100%" height="100%" style="display:block;">
           </div>
         </div>
         <div class="total-label">Total earnings</div>
@@ -1124,7 +1123,6 @@ function saveProfile() {
 }
 
 function applyProfile() {
-  // Topbar profile button
   const pd = document.getElementById('profileDisplay');
   if (state.profile.avatarUrl) {
     pd.innerHTML = `<img src="${state.profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
@@ -1132,16 +1130,6 @@ function applyProfile() {
   } else {
     pd.textContent = state.profile.initials;
     pd.style.background = state.profile.color;
-  }
-  // Creator avatar in earnings card
-  const av = document.getElementById('creatorAvatarInner');
-  const avWrap = document.getElementById('creatorAvatar');
-  if (state.profile.avatarUrl) {
-    avWrap.style.background = 'none';
-    av.innerHTML = `<img src="${state.profile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-  } else {
-    avWrap.style.background = state.profile.color;
-    av.innerHTML = `<span style="color:white;font-size:13px;font-weight:700;font-family:Inter,sans-serif">${state.profile.initials}</span>`;
   }
 }
 
